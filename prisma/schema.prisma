@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model State {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  districts District[]
+  users     User[]
+}
+
+model District {
+  id      Int      @id @default(autoincrement())
+  name    String
+  state   State    @relation(fields: [stateId], references: [id])
+  stateId Int
+  mandals Mandal[]
+  users   User[]
+  shops   Shop[]
+
+  @@unique([stateId, name])
+}
+
+model Mandal {
+  id         Int       @id @default(autoincrement())
+  name       String
+  district   District  @relation(fields: [districtId], references: [id])
+  districtId Int
+  villages   Village[]
+  users      User[]
+  shops      Shop[]
+
+  @@unique([districtId, name])
+}
+
+model Village {
+  id       Int    @id @default(autoincrement())
+  name     String
+  mandal   Mandal @relation(fields: [mandalId], references: [id])
+  mandalId Int
+  users    User[]
+  shops    Shop[]
+
+  @@unique([mandalId, name])
+}
+
+enum UserType {
+  CUSTOMER
+  MERCHANT
+  ADMIN
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  userType     UserType  @default(CUSTOMER)
+  username     String    @unique
+  phone        String    @unique
+  passwordHash String
+  stateId      Int?
+  districtId   Int?
+  mandalId     Int?
+  villageId    Int?
+  state        State?    @relation(fields: [stateId], references: [id])
+  district     District? @relation(fields: [districtId], references: [id])
+  mandal       Mandal?   @relation(fields: [mandalId], references: [id])
+  village      Village?  @relation(fields: [villageId], references: [id])
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  shops        Shop[]
+}
+
+enum ShopStatus {
+  OPEN
+  CLOSED
+  BUSY
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  icon  String @default("🏪")
+  shops Shop[]
+}
+
+model Shop {
+  id          Int        @id @default(autoincrement())
+  name        String
+  ownerName   String?
+  description String?
+  phone       String?
+  whatsapp    String?
+  address     String?
+  status      ShopStatus @default(CLOSED)
+  openTime    String?    @default("08:00")
+  closeTime   String?    @default("21:00")
+  is24Hours   Boolean    @default(false)
+  hasDelivery Boolean    @default(false)
+  imageUrl    String?
+  coverUrl    String?
+  ownerId     Int?
+  categoryId  Int?
+  districtId  Int?
+  mandalId    Int?
+  villageId   Int?
+  owner       User?      @relation(fields: [ownerId], references: [id])
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  district    District?  @relation(fields: [districtId], references: [id])
+  mandal      Mandal?    @relation(fields: [mandalId], references: [id])
+  village     Village?   @relation(fields: [villageId], references: [id])
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
