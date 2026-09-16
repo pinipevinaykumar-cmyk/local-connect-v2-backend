@@ -4,6 +4,13 @@ const prisma = new PrismaClient();
 // District → Mandal → Villages (comprehensive AP data)
 const AP_DATA: Record<string, Record<string, string[]>> = {
 
+  'Alluri Sitharama Raju': {
+    'Paderu':           ['Paderu Town','Araku Valley','Dumbriguda','G.Madugula'],
+    'Rampachodavaram':  ['Rampachodavaram','Addateegala','Devipatnam','Y Ramavaram'],
+    'Chintapalle':      ['Chintapalle','Koyyuru','G.K.Veedhi','Munchingiputtu'],
+    'Araku Valley':     ['Araku Valley','Ananthagiri','Hukumpeta','Dumbriguda'],
+  },
+
   'Anakapalli': {
     'Anakapalli':       ['Anakapalli Town','Atchutapuram','Pedagantyada','Cheedikada'],
     'Bheemunipatnam':   ['Bheemunipatnam','Madhurawada','Kommadi','Rushikonda'],
@@ -84,24 +91,24 @@ const AP_DATA: Record<string, Record<string, string[]>> = {
   },
 
   'East Godavari': {
-    'Rajahmundry Urban':   ['Rajahmundry One Town','Rajahmundry Two Town','Innispeta','Ramaraopet'],
-    'Rajahmundry Rural':   ['Morampudi','Pragadavaram','Bommuru Road','Nallajarla'],
-    'Bommuru':             ['Bommuru','Lalacheruvu','Pragadavaram','Korukonda Road'],
-    'Kadiam':              ['Kadiam','Rajolu','Rajanagaram','Kovvur Road'],
-    'Biccavolu':           ['Biccavolu','Endluru','Nagepalli','Naini'],
-    'Anaparthi':           ['Anaparthi','Gangavaram','Gollagudem','Kothapet'],
-    'Korukonda':           ['Korukonda','Nallajarla','Vasalatippa','Bommuru Road'],
-    'Mandapeta':           ['Mandapeta Town','Draksharamam Road','Alamuru','Ravulapalem Road'],
-    'P Gannavaram':        ['P Gannavaram','Draksharamam','Mummidevaram','Razole Road'],
-    'Ravulapalem':         ['Ravulapalem','Katrenikona','Nidadavole Junction','Pattisam'],
-    'Rowthulapudi':        ['Rowthulapudi','Pathapadu','Kotananduru','Thimmapuram'],
-    'Gangavaram':          ['Gangavaram','Sarpavaram','Munganda','Yendagandi'],
-    'Thondangi':           ['Thondangi','Gandepalle','Munganda','Yendagandi'],
-    'Devipatnam':          ['Devipatnam','Addateegala','Vararamachandrapuram','Kunavaram'],
-    'Rampa Chodavaram':    ['Rampa Chodavaram','Chintur','Kunta','Y Ramavaram'],
-    'Addateegala':         ['Addateegala','Devipatnam Road','V R Puram','Kunavaram'],
-    'Maredumilli':         ['Maredumilli','Addateegala Road','Devipatnam Road','Chintur Road'],
-    'Y Ramavaram':         ['Y Ramavaram','Rampa Chodavaram Road','Chintur Road','Kunta'],
+    'Rajahmundry Urban':   ['Rajahmundry One Town','Rajahmundry Two Town','Innispeta','Ramaraopet','Morampudi','Railpet','Danavayipeta','Jagannadhapuram','Kotipalli'],
+    'Rajahmundry Rural':   ['Morampudi','Pragadavaram','Nallajarla','Karakatta','Somavarappadu','Pattipadu','Kovvur Road','Bommuru Road'],
+    'Bommuru':             ['Bommuru','Lalacheruvu','Pragadavaram','Korukonda Road','Gowripatnam','Kommaragiri','Velerupadu','Chintalapudi'],
+    'Kadiam':              ['Kadiam','Rajolu','Rajanagaram','Kovvur Road','Gollagudem','Allavaram','Payakaraopeta','Somavaram'],
+    'Biccavolu':           ['Arikarevula','Balabhadrapuram','Biccavolu','Illapalle','Kapavaram','Komaripalem','Konkuduru','Melluru','Pandalapaka','Rallakhandrika','Rangapuram','Thummalapalle','Tossipudi','Voolapalle'],
+    'Anaparthi':           ['Anaparthi','Gangavaram','Gollagudem','Kothapet','Pedapalem','Maddulapalem','Siripuram','Ramaravupeta','Kothapalem','Ganugapeta','Vanapalli','Krishnarayapuram'],
+    'Korukonda':           ['Korukonda','Nallajarla','Vasalatippa','Bommuru Road','Venkatrayapuram','Yerravaripalem','Kotipalli','Subbammagunta','Timmapuram'],
+    'Mandapeta':           ['Mandapeta Town','Alamuru','Katuru','Draksharamam Road','Kotipalli','Devipuram','Sakhinetipalle','Ambavaram','Lingapalem'],
+    'P Gannavaram':        ['P Gannavaram','Draksharamam','Mummidevaram','Razole Road','Palakoderu','Penumanchili','Konakanamitla','Veeravasaram','Nidamanuru'],
+    'Ravulapalem':         ['Ravulapalem','Katrenikona','Nidadavole Junction','Pattisam','Sakhinetipalle','Denduluru','Kovvur Road','Mogalthur','Attili'],
+    'Rowthulapudi':        ['Rowthulapudi','Pathapadu','Kotananduru','Thimmapuram','Bommuru Road','Nallajarla','Gowripatnam','Vasalatippa','Chintalapudi'],
+    'Gangavaram':          ['Gangavaram','Sarpavaram','Munganda','Yendagandi','Thondangi','Gandepalle','Anaparthi Road','Bhimavaram Road'],
+    'Thondangi':           ['Thondangi','Gandepalle','Munganda','Anaparthi Road','Yelamanchili','Tuni Road','Gokavaram','Payakaraopeta'],
+    'Devipatnam':          ['Devipatnam','Vararamachandrapuram','Kunavaram','Bodapadu','Pottangi','Koyuru','Malkangiri Road','Chintur Road'],
+    'Rampa Chodavaram':    ['Rampa Chodavaram','Chintur','Kunta','Y Ramavaram','Gundala','Gopalapuram','Chintoor','Kunavaram'],
+    'Addateegala':         ['Addateegala','V R Puram','Kunavaram','Bodapadu','Rampa Chodavaram Road','Devipatnam Road','Gundala','Malkangiri Road'],
+    'Maredumilli':         ['Maredumilli','Addateegala Road','Devipatnam Road','Gundala','Rampachodavaram Road','Chintur Road','Satyavolu'],
+    'Y Ramavaram':         ['Y Ramavaram','Rampa Chodavaram Road','Chintur Road','Kunta','Gundala','Gopalapuram','Bodapadu'],
   },
 
   'Eluru': {
@@ -277,6 +284,15 @@ const AP_DATA: Record<string, Record<string, string[]>> = {
     'Santamagaluru':      ['Santamagaluru','Inkollu','Martur','Chirala Road'],
     'Kothapatnam':        ['Kothapatnam','Ongole Road','Chirala Road','Repalle Road'],
     'Tripuranthakam':     ['Tripuranthakam','Giddalur Road','Markapur Road','Cumbum Road'],
+  },
+
+  'Sri Potti Sriramulu Nellore': {
+    'Nellore':           ['Nellore Town','Kovur','Kavali','Gudur'],
+    'Kavali':            ['Kavali Town','Dagadarthi','Bogole','Allur'],
+    'Gudur':             ['Gudur Town','Chillakur','Kota','Vakadu'],
+    'Atmakur':           ['Atmakur','Sangam','Anumasamudrampeta','Rapur'],
+    'Sullurpeta':        ['Sullurpeta','Tada','Doravarisatram','Naidupeta'],
+    'Venkatagiri':       ['Venkatagiri','Dakkili','Balayapalle','Kaluvoya'],
   },
 
   'Srikakulam': {
