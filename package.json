@@ -4,6 +4,8 @@
   "description": "Local Connect REST API backend",
   "scripts": {
     "build": "nest build",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && nest build",
     "start": "node dist/main",
     "start:dev": "ts-node --transpile-only src/main.ts",
     "db:migrate": "prisma migrate dev",
