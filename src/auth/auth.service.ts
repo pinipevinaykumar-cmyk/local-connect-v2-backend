@@ -71,7 +71,7 @@ export class AuthService {
         username: dto.username,
         phone: dto.phone,
         passwordHash,
-        userType: dto.userType || 'CUSTOMER',
+        userType: 'USER',
         stateId: dto.districtId ? 1 : undefined, // AP state id = 1
         districtId: dto.districtId,
         mandalId: dto.mandalId,

@@ -32,6 +32,8 @@ const shopSelectFields = {
   hasDelivery: true,
   imageUrl: true,
   coverUrl: true,
+  verificationStatus: true,
+  verificationNote: true,
   isActive: true,
   createdAt: true,
   updatedAt: true,
@@ -164,6 +166,22 @@ export class BusinessesService {
   async getMyBusinesses(ownerId: number) {
     return this.prisma.shop.findMany({
       where: { ownerId, isActive: true },
+      select: shopSelectFields,
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async updateVerification(id: number, verificationStatus: any, verificationNote?: string) {
+    return this.prisma.shop.update({
+      where: { id },
+      data: { verificationStatus, verificationNote },
+      select: shopSelectFields,
+    });
+  }
+
+  async getPendingBusinesses() {
+    return this.prisma.shop.findMany({
+      where: { verificationStatus: 'PENDING_VERIFICATION', isActive: true },
       select: shopSelectFields,
       orderBy: { createdAt: 'desc' },
     });

@@ -15,7 +15,7 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { successResponse } from '../common/response/api-response';
-import { ShopStatus } from '@prisma/client';
+import { ShopStatus, VerificationStatus } from '@prisma/client';
 
 @Controller('businesses')
 export class BusinessesController {
@@ -82,5 +82,29 @@ export class BusinessesController {
   ) {
     const data = await this.businessesService.updateStatus(id, dto, user.id, user.userType);
     return successResponse(data, 'Business status updated successfully');
+  }
+
+  @Patch(':id/verify')
+  @UseGuards(JwtAuthGuard)
+  async verifyBusiness(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { verificationStatus: VerificationStatus; verificationNote?: string },
+    @CurrentUser() user: any,
+  ) {
+    if (user.userType !== 'ADMIN') {
+      throw new Error('Forbidden');
+    }
+    const data = await this.businessesService.updateVerification(id, body.verificationStatus, body.verificationNote);
+    return successResponse(data, 'Verification status updated');
+  }
+
+  @Get('admin/pending')
+  @UseGuards(JwtAuthGuard)
+  async getPendingBusinesses(@CurrentUser() user: any) {
+    if (user.userType !== 'ADMIN') {
+      throw new Error('Forbidden');
+    }
+    const data = await this.businessesService.getPendingBusinesses();
+    return successResponse(data, 'Pending businesses retrieved');
   }
 }

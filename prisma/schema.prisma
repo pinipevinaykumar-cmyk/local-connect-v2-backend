@@ -51,14 +51,13 @@ model Village {
 }
 
 enum UserType {
-  CUSTOMER
-  MERCHANT
+  USER
   ADMIN
 }
 
 model User {
   id           Int       @id @default(autoincrement())
-  userType     UserType  @default(CUSTOMER)
+  userType     UserType  @default(USER)
   username     String    @unique
   phone        String    @unique
   passwordHash String
@@ -80,6 +79,13 @@ enum ShopStatus {
   OPEN
   CLOSED
   BUSY
+}
+
+enum VerificationStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  CHANGES_REQUESTED
 }
 
 model Category {
@@ -114,6 +120,8 @@ model Shop {
   district    District?  @relation(fields: [districtId], references: [id])
   mandal      Mandal?    @relation(fields: [mandalId], references: [id])
   village     Village?   @relation(fields: [villageId], references: [id])
+  verificationStatus VerificationStatus @default(PENDING_VERIFICATION)
+  verificationNote   String?
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
