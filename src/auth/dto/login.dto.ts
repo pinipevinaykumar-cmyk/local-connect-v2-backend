@@ -1,10 +1,9 @@
-import { IsString, IsNotEmpty, Matches } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class LoginDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[0-9]{10}$/, { message: 'Phone must be exactly 10 digits' })
-  phone: string;
+  phone: string; // phone number or username
 
   @IsString()
   @IsNotEmpty()

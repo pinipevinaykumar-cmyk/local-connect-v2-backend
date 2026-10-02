@@ -95,12 +95,15 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { phone: dto.phone },
+    const isPhone = /^[0-9]{10}$/.test(dto.phone.trim());
+    const user = await this.prisma.user.findFirst({
+      where: isPhone
+        ? { phone: dto.phone.trim() }
+        : { username: dto.phone.trim() },
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid phone number or password');
+      throw new UnauthorizedException('Invalid phone number / username or password');
     }
 
     if (!user.isActive) {
@@ -109,7 +112,7 @@ export class AuthService {
 
     const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordValid) {
-      throw new UnauthorizedException('Invalid phone number or password');
+      throw new UnauthorizedException('Invalid phone number / username or password');
     }
 
     const safeUser = {
