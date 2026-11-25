@@ -6,10 +6,11 @@
     "build": "nest build",
     "postinstall": "prisma generate",
     "vercel-build": "prisma generate && nest build",
-    "start": "node dist/main",
+    "start": "node dist/src/main",
     "start:dev": "ts-node --transpile-only src/main.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "ts-node prisma/seed.ts",
+    "db:seed:admin": "ts-node prisma/seed-admin.ts",
     "db:studio": "prisma studio"
   },
   "prisma": {

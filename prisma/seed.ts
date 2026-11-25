@@ -479,6 +479,54 @@ async function main() {
   await prisma.category.createMany({ data: CATEGORIES, skipDuplicates: true });
   console.log(`Categories: ${CATEGORIES.length}`);
 
+  // System Modules
+  const SYSTEM_MODULES = [
+    // ── Main modules ──────────────────────────────
+    { moduleName: 'home',           parentModule: null, displayOrder: 1 },
+    { moduleName: 'explore',        parentModule: null, displayOrder: 2 },
+    { moduleName: 'top_rated',      parentModule: null, displayOrder: 3 },
+    { moduleName: 'nearby',         parentModule: null, displayOrder: 4 },
+    { moduleName: 'businesses',     parentModule: null, displayOrder: 5 },
+    { moduleName: 'food_meat',      parentModule: null, displayOrder: 6 },
+    { moduleName: 'healthcare',     parentModule: null, displayOrder: 7 },
+    { moduleName: 'education',      parentModule: null, displayOrder: 8 },
+    { moduleName: 'sports_fitness', parentModule: null, displayOrder: 9 },
+    { moduleName: 'services',       parentModule: null, displayOrder: 10 },
+    { moduleName: 'jobs',           parentModule: null, displayOrder: 11 },
+    { moduleName: 'updates_events', parentModule: null, displayOrder: 12 },
+    { moduleName: 'marketplace',    parentModule: null, displayOrder: 13 },
+    { moduleName: 'meet',           parentModule: null, displayOrder: 14 },
+    { moduleName: 'news',           parentModule: null, displayOrder: 15 },
+    { moduleName: 'advertisements', parentModule: null, displayOrder: 16 },
+    // ── Sports sub-modules ────────────────────────
+    { moduleName: 'sports.ppl',           parentModule: 'sports_fitness', displayOrder: 1 },
+    { moduleName: 'sports.tournaments',   parentModule: 'sports_fitness', displayOrder: 2 },
+    { moduleName: 'sports.teams',         parentModule: 'sports_fitness', displayOrder: 3 },
+    { moduleName: 'sports.players',       parentModule: 'sports_fitness', displayOrder: 4 },
+    { moduleName: 'sports.live_scores',   parentModule: 'sports_fitness', displayOrder: 5 },
+    { moduleName: 'sports.rankings',      parentModule: 'sports_fitness', displayOrder: 6 },
+    { moduleName: 'sports.achievements',  parentModule: 'sports_fitness', displayOrder: 7 },
+    { moduleName: 'sports.gallery',       parentModule: 'sports_fitness', displayOrder: 8 },
+    { moduleName: 'sports.news',          parentModule: 'sports_fitness', displayOrder: 9 },
+    { moduleName: 'sports.auction',       parentModule: 'sports_fitness', displayOrder: 10 },
+    // ── PPL tournament controls ───────────────────
+    { moduleName: 'ppl.player_registration', parentModule: 'sports.ppl', displayOrder: 1 },
+    { moduleName: 'ppl.voting',              parentModule: 'sports.ppl', displayOrder: 2 },
+    { moduleName: 'ppl.auction',             parentModule: 'sports.ppl', displayOrder: 3 },
+    { moduleName: 'ppl.live_scores',         parentModule: 'sports.ppl', displayOrder: 4 },
+    { moduleName: 'ppl.teams',               parentModule: 'sports.ppl', displayOrder: 5 },
+    { moduleName: 'ppl.rankings',            parentModule: 'sports.ppl', displayOrder: 6 },
+  ];
+
+  for (const mod of SYSTEM_MODULES) {
+    await (prisma.systemModule as any).upsert({
+      where: { moduleName: mod.moduleName },
+      update: {},
+      create: mod,
+    });
+  }
+  console.log(`System Modules: ${SYSTEM_MODULES.length}`);
+
   console.log('Done!');
 }
 

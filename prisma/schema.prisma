@@ -73,6 +73,25 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   shops        Shop[]
+  roleId       Int?
+  role         Role?     @relation(fields: [roleId], references: [id])
+}
+
+enum ModuleStatus {
+  ENABLED
+  DISABLED
+  MAINTENANCE
+}
+
+model SystemModule {
+  id           Int          @id @default(autoincrement())
+  moduleName   String       @unique
+  parentModule String?
+  status       ModuleStatus @default(ENABLED)
+  displayOrder Int          @default(0)
+  updatedBy    Int?
+  updatedAt    DateTime     @updatedAt
+  createdAt    DateTime     @default(now())
 }
 
 enum ShopStatus {
@@ -125,4 +144,94 @@ model Shop {
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+}
+
+// ───────────────────────── Admin panel core ─────────────────────────
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  key         String           @unique
+  name        String
+  isSystem    Boolean          @default(false)
+  permissions RolePermission[]
+  menuRoles   MenuRole[]
+  users       User[]
+}
+
+model Permission {
+  id          Int              @id @default(autoincrement())
+  key         String           @unique
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Menu {
+  id        Int        @id @default(autoincrement())
+  label     String
+  slug      String     @unique
+  icon      String     @default("circle")
+  url       String
+  section   String     @default("main")
+  order     Int        @default(0)
+  isEnabled Boolean    @default(true)
+  moduleKey String?
+  parentId  Int?
+  parent    Menu?      @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Menu[]     @relation("MenuTree")
+  roles     MenuRole[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+/// A menu with no MenuRole rows is visible to everyone.
+model MenuRole {
+  menuId Int
+  roleId Int
+  menu   Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([menuId, roleId])
+}
+
+model FeatureFlag {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  name        String
+  description String?
+  isEnabled   Boolean  @default(true)
+  updatedBy   Int?
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  actorId   Int?
+  actorName String?
+  action    String
+  module    String
+  entityId  String?
+  before    Json?
+  after     Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([module, createdAt])
+  @@index([actorId])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  group     String   @default("general")
+  updatedBy Int?
+  updatedAt DateTime @updatedAt
 }

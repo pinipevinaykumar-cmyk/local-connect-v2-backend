@@ -131,6 +131,31 @@ export class AuthService {
     return { token, user: safeUser };
   }
 
+  async unlockAdmin(userId: number, pin: string) {
+    const correctPin = process.env.ADMIN_PIN || 'PPL2027';
+    if (pin !== correctPin) {
+      throw new UnauthorizedException('Incorrect PIN');
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { userType: 'ADMIN' },
+      select: {
+        id: true,
+        username: true,
+        phone: true,
+        userType: true,
+        districtId: true,
+        mandalId: true,
+        villageId: true,
+        createdAt: true,
+      },
+    });
+
+    const token = this.generateToken(user);
+    return { token, user };
+  }
+
   private generateToken(user: { id: number; phone: string; userType: string }) {
     const payload = {
       sub: user.id,
